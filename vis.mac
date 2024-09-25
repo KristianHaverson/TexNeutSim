@@ -1,0 +1,75 @@
+
+/control/verbose 0
+/run/verbose 0
+/tracking/verbose 0
+
+
+
+###############################################
+
+/detector/setWorldSize 0.3 m
+
+/detector/setNumberOfBars 1
+/detector/setBarSpacing 5 cm
+
+/detector/setCrystalsPerBar 6
+
+/detector/setCrystalSize 2 cm
+/detector/setGreaseThickness 1 mm
+/detector/setCoverThickness 3.175 mm
+
+
+/detector/setWorldMaterial G4_AIR
+/detector/setCrystalMaterial G4_TERPHENYL
+#/detector/setGreaseMaterial G4_Si
+#/detector/setCoverMaterial G4_Si
+
+###############################################
+/source/energy 1 MeV
+/source/uniformEnergy false
+/source/minEnergy 0 MeV
+/source/maxEnergy 5 MeV
+
+# Set source position
+/source/position 0.0 0.0 -5.0 cm
+/source/position/random false
+
+# Set source direction
+/source/direction/isotropic false
+/source/direction/minTheta -30 deg
+/source/direction/maxTheta 30 deg
+/source/direction/minPhi 0 deg
+/source/direction/maxPhi 360 deg
+
+###############################################
+
+/run/initialize
+
+
+
+/vis/open OGL 600x600-0+0
+/vis/drawVolume
+
+/vis/viewer/set/style wireframe
+/vis/geometry/set/visibility World 0 true
+
+/vis/scene/add/trajectories smooth
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts false
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 1
+
+/vis/scene/add/hits
+
+/vis/modeling/trajectories/create/drawByParticleID
+/vis/modeling/trajectories/drawByParticleID-0/set e- red
+/vis/modeling/trajectories/drawByParticleID-0/set gamma green
+/vis/modeling/trajectories/drawByParticleID-0/set neutron yellow
+/vis/modeling/trajectories/drawByParticleID-0/set alpha blue
+/vis/modeling/trajectories/drawByParticleID-0/set GenericIon blue
+
+/vis/scene/endOfEventAction accumulate
+
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings
+
+/vis/viewer/flush
