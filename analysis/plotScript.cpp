@@ -30,7 +30,7 @@ void saveHists(const HistogramData& data, const std::string& outputFilename);
 ///////////////////////////////////////////////////////////////////////
 
 void plotScript() {
-    TTree* tree = openInputFile("../build/output.root", "event");
+    TTree* tree = openInputFile("../build/output.root", "events;1");
     if (!tree) return;
 
     auto [numberBars, numberCubes] = getSimConfig(tree);
