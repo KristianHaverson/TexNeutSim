@@ -22,117 +22,61 @@
 // * use  in  resulting  scientific  publications,  and indicate your *
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
-//
-/// \file hadronic/NeutronSource/NeutronSource.cc
-/// \brief Main program of the hadronic/NeutronSource example
-//
-//
-//
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
 #include "G4UImanager.hh"
-#include "QBBC.hh"
-#include "QGSP_BERT_HP.hh"
-#include "G4EmStandardPhysics.hh"
-#include "G4Transportation.hh"
-#include "G4RadioactiveDecayPhysics.hh"
-#include "G4HadronInelasticProcess.hh"
-#include "G4DecayPhysics.hh"
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
-#include "Randomize.hh"
-#include "G4Types.hh"
 #include "G4RunManagerFactory.hh"
-#include "G4UImanager.hh"
-#include "G4SteppingVerbose.hh"
 #include "Randomize.hh"
-#include "G4RadioactiveDecayPhysics.hh"
+#include "G4SteppingVerbose.hh"
 #include "DetectorConstruction.hh"
 #include "PhysicsList.hh"
 #include "ActionInitialization.hh"
 
-#include "G4UIExecutive.hh"
-#include "G4VisExecutive.hh"
+int main(int argc, char** argv) {
 
-#include "G4ParticleHPManager.hh"
-#include "QGSP_BERT.hh"
-#include "QGSP_BIC_HP.hh"
+    G4UIExecutive* ui = nullptr;
+    if (argc == 1) ui = new G4UIExecutive(argc, argv);
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+    G4Random::setTheEngine(new CLHEP::RanecuEngine);
 
-int main(int argc,char** argv) {
+    G4int precision = 4;
+    G4SteppingVerbose::UseBestUnit(precision);
 
-  //detect interactive mode (if no arguments) and define UI session
-  G4UIExecutive* ui = nullptr;
-  if (argc == 1) ui = new G4UIExecutive(argc,argv);
+    auto runManager = G4RunManagerFactory::CreateRunManager();
+    if (argc == 3) {
+        G4int nThreads = G4UIcommand::ConvertToInt(argv[2]);
+        runManager->SetNumberOfThreads(nThreads);
+    }
 
-  //choose the Random engine
-  G4Random::setTheEngine(new CLHEP::RanecuEngine);
-  
-  //use G4SteppingVerboseWithUnits
-  G4int precision = 4;
-  G4SteppingVerbose::UseBestUnit(precision);
-  
-  //construct the run manager
-  auto runManager = G4RunManagerFactory::CreateRunManager();  
-  if (argc==3) {
-    G4int nThreads = G4UIcommand::ConvertToInt(argv[2]);
-    runManager->SetNumberOfThreads(nThreads);
-  }  
+    auto* det = new DetectorConstruction;
+    runManager->SetUserInitialization(det);
 
-  //set mandatory initialization classes
-  DetectorConstruction* det= new DetectorConstruction;
-  runManager->SetUserInitialization(det);
+    auto* phys = new PhysicsList;
+    runManager->SetUserInitialization(phys);
 
-  PhysicsList* phys = new PhysicsList;
-  runManager->SetUserInitialization(phys);
-  
-  //G4VModularPhysicsList* physicsList = new G4VModularPhysicsList();//Make our own physics list
-  //G4EmStandardPhysics* emStandard = new G4EmStandardPhysics();
-  //physicsList->RegisterPhysics(emStandard);
-  //physicsList->SetVerboseLevel(0);
-  //G4RadioactiveDecayPhysics* radDecayPhysics = new G4RadioactiveDecayPhysics; // radDecayPhysics->ConstructParticle(); // radDecayPhysics->ConstructP$
-  //physicsList->RegisterPhysics(radDecayPhysics);
-  //G4DecayPhysics *decayphys = new G4DecayPhysics();
-  //physicsList->RegisterPhysics(decayphys);
-  //runManager->SetUserInitialization(physicsList);
-    
+    runManager->SetUserInitialization(new ActionInitialization(det));
 
+    // Initialize visualization
+    G4VisManager* visManager = nullptr;
+    G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-  runManager->SetUserInitialization(new ActionInitialization(det));
+    if (ui) {
+        visManager = new G4VisExecutive;
+        visManager->Initialize();
+        ui->SessionStart();
+        delete ui;
+    } else {
+        G4String command = "/control/execute ";
+        G4String fileName = argv[1];
+        UImanager->ApplyCommand(command + fileName);
+    }
 
-  // Replaced HP environmental variables with C++ calls
-  //G4ParticleHPManager::GetInstance()->SetSkipMissingIsotopes( false );
-  //G4ParticleHPManager::GetInstance()->SetDoNotAdjustFinalState( true );
-  //G4ParticleHPManager::GetInstance()->SetUseOnlyPhotoEvaporation( false );
-  //G4ParticleHPManager::GetInstance()->SetNeglectDoppler( false );
-  //G4ParticleHPManager::GetInstance()->SetProduceFissionFragments( true );
-  //G4ParticleHPManager::GetInstance()->SetUseWendtFissionModel( true );
-  //G4ParticleHPManager::GetInstance()->SetUseNRESP71Model( false );
-
-  //initialize visualization
-  G4VisManager* visManager = nullptr;
-
-  //get the pointer to the User Interface manager
-  G4UImanager* UImanager = G4UImanager::GetUIpointer();
-
-  if (ui)  {
-   //interactive mode
-   visManager = new G4VisExecutive;
-   visManager->Initialize();
-   ui->SessionStart();
-   delete ui;
-  }
-  else  {
-   //batch mode
-   G4String command = "/control/execute ";
-   G4String fileName = argv[1];
-   UImanager->ApplyCommand(command+fileName);
-  }
-
-  //job termination
-  delete visManager;
-  delete runManager;
+    // Job termination
+    delete visManager;
+    delete runManager;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+
