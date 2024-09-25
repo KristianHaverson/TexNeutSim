@@ -1,5 +1,5 @@
 # TexNeutSim
-Welcome to TexNeutSim, a Geant4 simulation framework for the TexNeut neutron detector. This repository provides the a basic set of tools necessary to simulate neutron interactions.
+Welcome to TexNeutSim, a Geant4 simulation framework for the TexNeut neutron detector.
 ## Dependencies
 TexNeutSim is tested with:
 - Geant4: Version 11.2.2
