@@ -22,69 +22,35 @@
 // * use  in  resulting  scientific  publications,  and indicate your *
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
-//
-/// \file PhysicsList.cc
-/// \brief Implementation of the PhysicsList class
-//
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "PhysicsList.hh"
-
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
-
-#include "G4NuclideTable.hh"
-
-//#include "HadronElasticPhysicsHP.hh"
-
 #include "G4HadronElasticPhysics.hh"
-#include "G4HadronPhysicsFTFP_BERT_HP.hh"
 #include "G4HadronPhysicsQGSP_BIC_HP.hh"
-#include "G4HadronPhysicsQGSP_BIC_AllHP.hh"
-#include "G4HadronInelasticQBBC.hh"
-#include "G4HadronPhysicsINCLXX.hh"
-
 #include "G4IonElasticPhysics.hh"
 #include "G4IonPhysicsXS.hh"
-#include "G4IonPhysicsPHP.hh"
-#include "G4IonINCLXXPhysics.hh"
-
 #include "G4StoppingPhysics.hh"
-//#include "GammaNuclearPhysics.hh"
-
-//#include "ElectromagneticPhysics.hh"
 #include "G4EmStandardPhysics.hh"
-
 #include "G4DecayPhysics.hh"
-
-//include "RadioactiveDecayPhysics.hh"
 #include "G4RadioactiveDecayPhysics.hh"
 
-#include "G4Neutron.hh"
-#include "G4ProcessManager.hh"
-#include "G4HadronicInteraction.hh"
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PhysicsList::PhysicsList()
-:G4VModularPhysicsList(),
- fHadronElastic(nullptr), fHadronInelastic(nullptr),
- fIonElastic(nullptr), fIonInelastic(nullptr),
- fGammaNuclear(nullptr), fElectromagnetic(nullptr),
- fDecay(nullptr), fRadioactiveDecay(nullptr)
+: G4VModularPhysicsList(),
+  fHadronElastic(nullptr), 
+  fHadronInelastic(nullptr),
+  fIonElastic(nullptr), 
+  fIonInelastic(nullptr),
+  fElectromagnetic(nullptr),
+  fDecay(nullptr), 
+  fRadioactiveDecay(nullptr) 
 {
 
   G4int verb = 0;
   SetVerboseLevel(verb);
   
-  new G4UnitDefinition( "mm2/g",  "mm2/g", "Surface/Mass", mm2/g);
-  new G4UnitDefinition( "um2/mg", "um2/mg","Surface/Mass", um*um/mg);
-  
-  //const G4double meanLife =0;// 1*nanosecond, halfLife = meanLife*std::log(2);
-  //G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(0);
-
-
 
  // Hadron Elastic scattering
   fHadronElastic = new G4HadronElasticPhysics(verb);
@@ -125,12 +91,9 @@ PhysicsList::PhysicsList()
 
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PhysicsList::~PhysicsList()
-{ }
+PhysicsList::~PhysicsList(){ }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PhysicsList::ConstructProcess()
 {
@@ -148,7 +111,6 @@ void PhysicsList::ConstructProcess()
   //fRadioactiveDecay->ConstructProcess();
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void PhysicsList::SetCuts()
 {
@@ -158,4 +120,3 @@ void PhysicsList::SetCuts()
   //SetCutValue(10*km, "gamma");
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

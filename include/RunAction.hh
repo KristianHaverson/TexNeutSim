@@ -35,7 +35,6 @@
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
-
 #include "G4UserRunAction.hh"
 #include "G4Accumulable.hh"
 #include "globals.hh"
@@ -43,6 +42,7 @@
 #include "G4LogicalVolume.hh"
 #include "TFile.h"
 #include "TTree.h"
+#include "TVector3.h"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -56,7 +56,7 @@ class G4Run;
 class RunAction : public G4UserRunAction
 {
  public:
-    RunAction(DetectorConstruction*, PrimaryGeneratorAction*);
+    RunAction(DetectorConstruction*);
     virtual ~RunAction();
 
     // virtual G4Run* GenerateRun();
@@ -70,10 +70,16 @@ class RunAction : public G4UserRunAction
     void AddEnergyDeposition(const G4String& cubeID, G4double edep);
     std::vector<G4LogicalVolume*> fscoringVolumes;
 
+  void FillInitialConditions(const G4ThreeVector& Direction,
+                                    const G4ThreeVector& Position,
+                                    const G4double& Energy,
+                                    const std::string name); 
     //bool visual=false;
   private:
     DetectorConstruction* fDetector;
     TTree* fTree;
+    TTree* fDetectorTree;
+    TTree* fPrimaryTree;
     TFile* fRootFile;
     //std::vector<G4double> vec_Edep;
     //std::vector<G4String> vec_VolumeName;
@@ -84,6 +90,21 @@ class RunAction : public G4UserRunAction
     std::vector<double> fEdepValues;   // Store energy depositions
     private:
     PrimaryGeneratorAction*    fPrimary;
+
+    // get detetor conditions at end of run action from detector construction
+    std::vector<std::string> ScoringName, ScoringMaterial;
+    std::vector<TVector3> ScoringLocation, ScoringSize;
+
+    // get initial beam conditions from primaryAction generator at the start of each event
+    TVector3 BeamDirection, SourcePosition;
+    double  BeamEnergy;
+    std::string beamName;
+
+
+
+  //TVector3 ConvertToTVector3(const G4ThreeVector& g4vec) {
+  //    return TVector3(g4vec.x(), g4vec.y(), g4vec.z());
+  //}
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

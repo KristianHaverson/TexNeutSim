@@ -5,7 +5,7 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include <vector>
-
+#include "TVector3.h"
 class G4LogicalVolume;
 class G4VPhysicalVolume;
 class G4Material;
@@ -101,7 +101,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void LogGeometryChange();
 
   public:
+    std::vector<std::string> scoringMaterialNames;
+    std::vector<G4ThreeVector>  scoringSizes;
     std::vector<std::string> scoringHandles;
+    std::vector<G4ThreeVector> scoringPlacements;
+
+
     //G4int getNumberScoringVolumes()const{return fNumberOfBars *fCrystalsPerBar }; 
     //std::vector<G4LogicalVolume*> GetScoringVolumes() const { return fLCrystals; }
 

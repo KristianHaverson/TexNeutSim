@@ -43,13 +43,13 @@
 class G4Event;
 class DetectorConstruction;
 class ParticleMessenger;
-
+class RunAction;
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
 {
   public:
-    PrimaryGeneratorAction(DetectorConstruction*);    
+    PrimaryGeneratorAction(DetectorConstruction*, RunAction* run);    
    ~PrimaryGeneratorAction();
 
   public:
@@ -57,6 +57,8 @@ class PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     G4ParticleGun* GetParticleGun() {return fParticleGun;};
 
   private:
+
+    RunAction* fRun;
     G4ParticleGun* fParticleGun;
     G4ParticleDefinition* fParticleDef;
 

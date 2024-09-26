@@ -36,6 +36,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
 #include "ParticleMessenger.hh"
+#include "RunAction.hh"
 
 #include "G4RandomDirection.hh"
 #include "G4Event.hh"
@@ -49,9 +50,10 @@
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
+PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det, RunAction* run)
     : G4VUserPrimaryGeneratorAction(), 
       fDetector(det),
+      fRun(run),
       fParticleGun(new G4ParticleGun(1)) // Initialize particle gun for one particle
 {   
 
@@ -192,5 +194,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent){
     }
     // Generate the primary vertex for the event
     fParticleGun->GeneratePrimaryVertex(anEvent);
+
+
+    fRun->FillInitialConditions(fParticleGun->GetParticleMomentumDirection(),
+                                fParticleGun->GetParticlePosition(),
+                                fParticleGun->GetParticleEnergy(),
+                                fParticleDef->GetParticleName()
+                                );
 }
 

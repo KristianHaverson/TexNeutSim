@@ -53,21 +53,23 @@ ActionInitialization::~ActionInitialization()
 void ActionInitialization::BuildForMaster() const
 {
 
-  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(fDetector);
-  RunAction* runAction = new RunAction(fDetector, primary );
-  //runAction->visual=interactive;
+  RunAction* runAction = new RunAction(fDetector );
+  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(fDetector,runAction);
+
+
   SetUserAction(runAction);
 }
 
 void ActionInitialization::Build() const
 {
 
-    
-  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(fDetector);
+      
+  RunAction* runAction = new RunAction(fDetector );
+  SetUserAction(runAction);
+
+  PrimaryGeneratorAction* primary = new PrimaryGeneratorAction(fDetector,runAction);
   SetUserAction(primary);
   
-  RunAction* runAction = new RunAction(fDetector, primary );
-  SetUserAction(runAction);
 
   EventAction* eventAction = new EventAction(runAction,fDetector);
   SetUserAction(eventAction);  

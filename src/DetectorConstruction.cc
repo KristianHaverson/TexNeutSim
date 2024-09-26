@@ -319,14 +319,16 @@ G4LogicalVolume* DetectorConstruction::CreateCover(G4ThreeVector position, G4int
 
 void DetectorConstruction::CreateCrystal(G4LogicalVolume* parentVolume, G4ThreeVector position, G4int barIndex, G4int crystalIndex) {
 
-    G4Box* solidCrystal = new G4Box("Crystal", 0.5 * fCrystalSize, 0.5 * fCrystalSize, 0.5 * fCrystalSize);
-    scoringHandles.push_back("LogicalCrystal_" + std::to_string(barIndex) + "_" + std::to_string(crystalIndex));
-    G4LogicalVolume* logicCrystal = new G4LogicalVolume(solidCrystal, fCrystalMaterial, scoringHandles.back());
+  // store usefull datums
+  scoringHandles.push_back("LogicalCrystal_" + std::to_string(barIndex) + "_" + std::to_string(crystalIndex));
+  scoringPlacements.push_back(position);
+  scoringSizes.push_back(G4ThreeVector(fCrystalSize,fCrystalSize,fCrystalSize));
+  scoringMaterialNames.push_back(fCrystalMaterial->GetName());
 
-
-    new G4PVPlacement(0, position, logicCrystal,"PhysicalCrystal_" + std::to_string(barIndex) + "_" + std::to_string(crystalIndex), parentVolume, false, barIndex * 100 + crystalIndex, true);
-    G4cout<< " construction = "<< logicCrystal->GetName()<<G4endl;
-    fLCrystals.push_back(logicCrystal);
+  G4Box* solidCrystal = new G4Box("Crystal", 0.5 * scoringSizes.back().x(), 0.5 * scoringSizes.back().y(), 0.5 * scoringSizes.back().z());
+  G4LogicalVolume* logicCrystal = new G4LogicalVolume(solidCrystal, fCrystalMaterial, scoringHandles.back());
+  new G4PVPlacement(0, scoringPlacements.back(), logicCrystal,"PhysicalCrystal_" + std::to_string(barIndex) + "_" + std::to_string(crystalIndex), parentVolume, false, barIndex * 100 + crystalIndex, true);
+  fLCrystals.push_back(logicCrystal);
 }
 
 void DetectorConstruction::CreateGrease(G4LogicalVolume* parentVolume, G4ThreeVector position, G4int barIndex, G4int greaseIndex) {
